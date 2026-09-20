@@ -1,0 +1,22 @@
+{
+	"name": "photo_ocr",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Nextcloud app for OCR on uploaded or photographed images (client-side Tesseract.js)",
+	"scripts": {
+		"build": "vite build && node scripts/postbuild.mjs",
+		"dev": "vite build --watch",
+		"refresh-assets": "node scripts/postbuild.mjs",
+		"test": "node --test"
+	},
+	"dependencies": {
+		"tesseract.js": "5.1.1",
+		"tesseract.js-core": "5.1.1",
+		"vue": "3.5.13"
+	},
+	"devDependencies": {
+		"@vitejs/plugin-vue": "5.2.1",
+		"vite": "5.4.11"
+	}
+}

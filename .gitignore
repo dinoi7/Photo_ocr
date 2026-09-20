@@ -1,0 +1,4 @@
+node_modules/
+.vite/
+ocr_samples/
+*.log
