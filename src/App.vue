@@ -232,7 +232,7 @@ export default {
 					rotation: this.rotation,
 					enhance: OCR_ENHANCE,
 				})
-				const text = await recognize(source, this.langKey, (message) => {
+				const recognition = await recognize(source, this.langKey, (message) => {
 					if (token !== this.ocrToken) {
 						return
 					}
@@ -244,8 +244,8 @@ export default {
 				if (token !== this.ocrToken) {
 					return
 				}
-				this.result = (text || '').trim()
-				this.analysis = analyze(this.result)
+				this.result = (recognition.text || '').trim()
+				this.analysis = analyze(this.result, { words: recognition.words })
 				if (this.result === '') {
 					this.error = 'Es wurde kein Text erkannt. Bitte verwende ein schärferes Bild.'
 				}

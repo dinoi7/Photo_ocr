@@ -10,9 +10,11 @@ PC hochgeladen oder direkt mit dem Smartphone fotografiert werden. Die
 Texterkennung läuft vollständig im Browser (Tesseract.js/WebAssembly), die
 Bilder werden also nicht an den Server übertragen. Der erkannte Text wird
 in der App angezeigt und kann in die Zwischenablage kopiert werden.
+Bekannte Maschinen-Screens (LightBurn, Bambu Lab, HeyGears UV-Druck) werden
+automatisch ausgewertet.
 Unterstützte Sprachen: Deutsch und Englisch.
 	]]></description>
-	<version>1.2.0</version>
+	<version>1.3.0</version>
 	<licence>agpl</licence>
 	<author>opencode</author>
 	<namespace>PhotoOcr</namespace>

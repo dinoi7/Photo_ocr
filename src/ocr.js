@@ -42,7 +42,7 @@ let loadedLanguages = null
  * @param {File|Blob|string|HTMLImageElement} image image source
  * @param {string} languages tesseract language string, e.g. "deu+eng"
  * @param {(message: object) => void} onProgress progress callback
- * @return {Promise<string>} recognised text
+ * @return {Promise<{text: string, words: object[]}>} recognised text and word boxes
  */
 export async function recognize(image, languages, onProgress) {
 	if (!worker || loadedLanguages !== languages) {
@@ -64,7 +64,15 @@ export async function recognize(image, languages, onProgress) {
 	}
 
 	const { data } = await worker.recognize(image)
-	return data.text || ''
+	const words = (data.words || []).map((word) => ({
+		text: word.text || '',
+		confidence: word.confidence,
+		x0: word.bbox ? word.bbox.x0 : 0,
+		y0: word.bbox ? word.bbox.y0 : 0,
+		x1: word.bbox ? word.bbox.x1 : 0,
+		y1: word.bbox ? word.bbox.y1 : 0,
+	}))
+	return { text: data.text || '', words }
 }
 
 /**

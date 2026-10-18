@@ -12,6 +12,9 @@ Eine einfache Nextcloud-App zur Texterkennung (OCR) aus Bildern.
 - Automatische Auswertung bekannter Maschinen-Screens:
   - **LightBurn** (Laser): liest die „Laser on time" (HH:MM:SS) aus
   - **Bambu Lab** (3D-Druck): liest Gewicht und Filament-Material (z. B. PLA) aus
+  - **HeyGears** (UV-/Resin-Druck): liest die Materialmengen der Kanäle
+    Weiss (W), Cyan (C), Magenta (M), Gelb (Y), Schwarz (K), Support (S) und
+    Varnish (V) in mL sowie Druckzeit und Material-Summe aus
   - Fehlt der Dezimalpunkt im Gewicht (z. B. `445g` statt `4.45g`), wird
     zusätzlich ein Vorschlag angezeigt
 - OCR läuft **vollständig im Browser** (Tesseract.js / WebAssembly)
@@ -57,6 +60,12 @@ aufgerufen.
 In der Auswertung werden typische OCR-Fehler korrigiert: ein als `9` verlesenes
 Einheitenzeichen `g` sowie ein fehlender Dezimalpunkt (z. B. `11379` → Vorschlag
 `11.37 g`). Bei fehlendem Punkt zeigt die App Rohwert und Vorschlag getrennt an.
+
+Bei den UV-Kanälen (W, C, M, Y, K, S, V) sind die kleinen Buchstaben-Badges für
+die OCR schwer lesbar, die Zahlen dagegen zuverlässig. Deshalb wird das
+Werte-Raster über die Wort-Positionen (Bounding-Boxes) rekonstruiert: Zeilen
+und Spalten werden sortiert und in der festen Reihenfolge des HeyGears-UI den
+Kanälen zugeordnet. Die Material-Summe wird dabei automatisch herausgerechnet.
 
 ## Voraussetzungen
 

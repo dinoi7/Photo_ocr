@@ -5,7 +5,7 @@
 				{{ typeLabel }}
 			</span>
 			<span class="po-analysis__scores">
-				LightBurn {{ analysis.laserScore }} · Bambu {{ analysis.bambuScore }}
+				LightBurn {{ analysis.laserScore }} · Bambu {{ analysis.bambuScore }} · UV {{ analysis.uvScore }}
 			</span>
 		</div>
 
@@ -42,8 +42,32 @@
 			</button>
 		</div>
 
+		<div v-for="channel in uvChannels" :key="channel.key" class="po-analysis__row">
+			<span class="po-analysis__label">{{ channel.label }}</span>
+			<span class="po-analysis__value">{{ channel.value }}</span>
+			<button type="button" class="button" @click="copy(`uv-${channel.key}`, channel.value)">
+				{{ copied === `uv-${channel.key}` ? 'Kopiert' : 'Kopieren' }}
+			</button>
+		</div>
+
+		<div v-if="uvTime" class="po-analysis__row">
+			<span class="po-analysis__label">Druckzeit</span>
+			<span class="po-analysis__value">{{ uvTime }}</span>
+			<button type="button" class="button" @click="copy('uv-time', uvTime)">
+				{{ copied === 'uv-time' ? 'Kopiert' : 'Kopieren' }}
+			</button>
+		</div>
+
+		<div v-if="uvTotalDisplay" class="po-analysis__row">
+			<span class="po-analysis__label">Material gesamt</span>
+			<span class="po-analysis__value">{{ uvTotalDisplay }}</span>
+			<button type="button" class="button" @click="copy('uv-total', uvTotalDisplay)">
+				{{ copied === 'uv-total' ? 'Kopiert' : 'Kopieren' }}
+			</button>
+		</div>
+
 		<p v-if="!hasValues" class="po-analysis__empty">
-			Keine bekannten Werte (LightBurn / Bambu Lab) gefunden.
+			Keine bekannten Werte (LightBurn / Bambu Lab / UV-Druck) gefunden.
 		</p>
 
 		<p v-if="weightHint" class="po-analysis__note">{{ weightHint }}</p>
@@ -72,6 +96,7 @@ export default {
 			const labels = {
 				laser: 'LightBurn – Laserzeit',
 				bambu: 'Bambu Lab – 3D-Druck',
+				uv: 'HeyGears – UV-Druck (mL)',
 				unknown: 'Unbekanntes Format',
 			}
 			return labels[this.type] || labels.unknown
@@ -80,8 +105,41 @@ export default {
 			return Boolean(
 				this.analysis.laser.time
 				|| this.analysis.bambu.weight
-				|| this.analysis.bambu.material,
+				|| this.analysis.bambu.material
+				|| this.uvChannels.length
+				|| this.uvTime
+				|| this.uvTotalDisplay,
 			)
+		},
+		uvChannels() {
+			const uv = this.analysis.uv
+			if (!uv || !uv.inks) {
+				return []
+			}
+			const labels = {
+				W: 'Weiss (W)',
+				C: 'Cyan (C)',
+				M: 'Magenta (M)',
+				Y: 'Gelb (Y)',
+				K: 'Schwarz (K)',
+				S: 'Support (S)',
+				V: 'Varnish (V)',
+			}
+			const order = ['W', 'C', 'M', 'Y', 'K', 'S', 'V']
+			return order
+				.filter((key) => key in uv.inks)
+				.map((key) => ({
+					key,
+					label: labels[key],
+					value: `${Number(uv.inks[key]).toFixed(2)} mL`,
+				}))
+		},
+		uvTime() {
+			return (this.analysis.uv && this.analysis.uv.time) || ''
+		},
+		uvTotalDisplay() {
+			const total = this.analysis.uv && this.analysis.uv.total
+			return total === null || total === undefined ? '' : `${Number(total).toFixed(2)} mL`
 		},
 		weightRawDisplay() {
 			const weight = this.analysis.bambu.weight
@@ -143,6 +201,11 @@ export default {
 .po-analysis__badge--bambu {
 	background: rgba(0, 160, 90, 0.15);
 	color: #0a7d4b;
+}
+
+.po-analysis__badge--uv {
+	background: rgba(90, 60, 200, 0.15);
+	color: #4b32a8;
 }
 
 .po-analysis__badge--unknown {
